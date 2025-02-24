@@ -17,10 +17,21 @@ class userService{
                   const data = fs.readFileSync(this.filePath); //le o arquivo
                   return JSON.parse(data); //transforma o json em objeto
                 }
-            } catch (erro) {
+            } catch (erro) { //caso ocorra um erro
                 console.log('Erro ao carregar arquivo', erro);
-        }
+            }
+            return []; //retorna um array vazio
     }
+
+
+    getNextId(){
+        try{ 
+        if(this.users.length===0) return 1;
+        return Math.max(...this.users.map(user => user.id))+1; 
+    } catch (erro) {
+        console.log("Erro ao buscar proximo id", erro);
+    }
+}
 
 
 
