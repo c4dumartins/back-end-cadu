@@ -5,19 +5,19 @@ const app = express(); //nome qualquer para express
 app.use(express.json()); //vou habilitar json no express
 
 //rota para criar usuario
+ 
+// Rota para criar um novo usuário
+app.post("/user", (req, res) => {
+    const { nome, email, senha, endereco, cpf, telefone } = req.body;  // Agora extraímos os novos campos
 
-app.post("/user",(req, res) => {
-    const {nome, email} = req.body;
-    if(!nome || !email){
-        return res.status(400).json
-        ({erro:"Nome e email são obrigatórios"})
+    // Verifica se todos os campos obrigatórios estão presentes
+    if (!nome || !email || !senha || !endereco || !cpf || !telefone) {
+        return res.status(400).json({ erro: "Todos os campos são obrigatórios (nome, email, senha, endereco, cpf, telefone)" });
     }
 
-    const user = userService.addUser(nome, email);
-    res.status(200).json({user});
-})
-
-//rota para listar todos os usuários
+    const user = userService.addUser(nome, email, senha, endereco, cpf, telefone);  // Adiciona o usuário com os novos dados
+    res.status(200).json({ user });  // Retorna o usuário criado
+});
 
 app.get("/user", (req, res) => {
     res.json(userService.getUsers())

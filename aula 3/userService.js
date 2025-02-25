@@ -8,7 +8,7 @@ class userService {
     constructor() {
         this.filePath = path.join(__dirname, 'user.json');
         this.users = this.loadUsers(); //Array para armazenar user
-        this.nextId = this.getNextId(); //contador para grrar id
+        this.nextId = this.getUsers(); //contador para grrar id
     }
 
     loadUsers() {
@@ -42,10 +42,10 @@ class userService {
     }
 
 
-    addUser(nome, email) {
+    addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
-            const user = new User(this.nextId++, nome, email);
-            this.users.push(user);
+            const user = new User(this.nextId++, nome, email, senha, endereco, cpf, telefone);
+            this.user.push(user);
             this.saveUsers();
             return user;
         } catch (erro) {
@@ -55,7 +55,7 @@ class userService {
 
     getUsers() {
         try {
-            return this.users;
+            return this.user;
         } catch (erro) {
             console.log("Erro ao buscar proximo id", erro);
         }
