@@ -8,7 +8,7 @@ class userService {
     constructor() {
         this.filePath = path.join(__dirname, 'user.json');
         this.users = this.loadUsers(); //Array para armazenar user
-        this.nextId = this.getUsers(); //contador para grrar id
+        this.nextId = this.getNextId(); //contador para grrar id
     }
 
     loadUsers() {
@@ -37,7 +37,7 @@ class userService {
         try {
             fs.writeFileSync(this.filePath, JSON.stringify(this.users));
         } catch (erro) {
-            console.log("Erro ao buscar proximo id", erro);
+            console.log("Erro ao salvar", erro);
         }
     }
 
@@ -45,21 +45,50 @@ class userService {
     addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
             const user = new User(this.nextId++, nome, email, senha, endereco, cpf, telefone);
-            this.user.push(user);
+            console.log(user)
+            this.users.push(user);
             this.saveUsers();
             return user;
         } catch (erro) {
-            console.log("Erro ao buscar proximo id", erro);
+            console.log("Erro ao add id", erro);
         }
     }
 
     getUsers() {
         try {
-            return this.user;
+            return this.users;
         } catch (erro) {
-            console.log("Erro ao buscar proximo id", erro);
+            console.log("Erro ao buscar usuario", erro);
         }
     }
+
+    deleteUser(id){
+        try{
+            this.users = this.users.filter(user => user.id !== id);
+            this.saveUsers();
+
+        }catch{
+            console.log('erro ao deletar usuario', erro);
+        }
+    }
+
+    updateUser(id, newData) { 
+        try {
+            const userIndex = this.users.findIndex(user => user.id === id);
+            
+            if (userIndex === -1) throw new Error("Usuário não encontrado");
+    
+            this.users[userIndex] = { ...this.users[userIndex], ...newData };
+            this.saveUsers();
+    
+            return this.users[userIndex];
+        } catch (erro) {
+            console.log("Erro ao atualizar usuário:", erro);
+            throw erro;
+        }
+    }
+    
+
 }
 
 module.exports = new userService
