@@ -1,6 +1,7 @@
 const User = require("./user");
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
 
 
 class userService {
@@ -42,9 +43,10 @@ class userService {
     }
 
 
-    addUser(nome, email, senha, endereco, cpf, telefone) {
+    async addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
-            const user = new User(this.nextId++, nome, email, senha, endereco, cpf, telefone);
+            const senhaCripto = await bcrypt.hash(senha, 10);
+            const user = new User(this.nextId++, nome, email, senhaCripto, endereco, cpf, telefone);
             console.log(user)
             this.users.push(user);
             this.saveUsers();
