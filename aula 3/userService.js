@@ -45,6 +45,10 @@ class userService {
 
     async addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
+            const cpfexistente = this.users.some(user => user.cpf === cpf)
+            if(cpfexistente){
+                throw new Error('CPF já cadastrado'); 
+            }
             const senhaCripto = await bcrypt.hash(senha, 10);
             const user = new User(this.nextId++, nome, email, senhaCripto, endereco, cpf, telefone);
             console.log(user)
@@ -53,6 +57,7 @@ class userService {
             return user;
         } catch (erro) {
             console.log("Erro ao add id", erro);
+            throw erro;
         }
     }
 

@@ -8,18 +8,18 @@ app.use(express.json()); //vou habilitar json no express
  
 // Rota para criar um novo usuário
 app.post("/user", async (req, res) => {
-    const { nome, email, senha, endereco, cpf, telefone } = req.body;
-    
-
-    // Verifica se todos os campos obrigatórios estão presentes
-    if (!nome || !email || !senha || !endereco || !cpf || !telefone) {
-        return res.status(400).json({ erro: "Todos os campos são obrigatórios (nome, email, senha, endereco, cpf, telefone)" });
-    }
-
-    const user = await userService.addUser(nome, email, senha, endereco, cpf, telefone);  // Adiciona o usuário com os novos dados
-
-
-    res.status(200).json({ user });  // Retorna o usuário criado
+        try{
+            const { nome, email, senha, endereco, cpf, telefone } = req.body;// Verifica se todos os campos obrigatórios estão presentes
+            if (!nome || !email || !senha || !endereco || !cpf || !telefone) {
+                return res.status(400).json
+                    ({ error: "Todos os campos são obrigatórios (nome, email, senha, endereco, cpf, telefone)" });
+            }
+            const user = await userService.addUser(nome, email, senha, endereco, cpf, telefone);  // Adiciona o usuário com os novos dados
+            res.status(200).json({ user });  // Retorna o usuário criado
+        } catch (erro) {
+            console.log(erro);
+            res.status(400).json({ error: erro.mesage });
+        }
 });
 
 app.get("/user", (req, res) => {
