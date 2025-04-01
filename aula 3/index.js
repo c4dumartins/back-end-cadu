@@ -18,7 +18,7 @@ app.post("/user", async (req, res) => {
             res.status(200).json({ user });  // Retorna o usuário criado
         } catch (erro) {
             console.log(erro);
-            res.status(400).json({ error: erro.mesage });
+            res.status(400).json({ error: erro.message });
         }
 });
 
