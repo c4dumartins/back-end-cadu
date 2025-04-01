@@ -47,7 +47,14 @@ class userService {
         try {
             const cpfexistente = this.users.some(user => user.cpf === cpf)
             if(cpfexistente){
-                throw new Error('CPF já cadastrado'); 
+                throw new Error('Usuário não encontrado'); 
+            }
+            if(cpf !== user.cpf){
+                const cpfexistente = this.users.some(u => u.id !== id
+                    && u.cpf === cpf);
+                if (cpfexistente) {
+                    throw new Error('CPF já cadastrado')
+                }
             }
             const senhaCripto = await bcrypt.hash(senha, 10);
             const user = new User(this.nextId++, nome, email, senhaCripto, endereco, cpf, telefone);
