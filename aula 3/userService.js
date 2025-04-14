@@ -2,6 +2,7 @@ const User = require("./user");
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
+const mysql = require ("./mysql");
 
 
 class userService {
@@ -57,11 +58,14 @@ class userService {
                 }
             }
             const senhaCripto = await bcrypt.hash(senha, 10);
-            const user = new User(this.nextId++, nome, email, senhaCripto, endereco, cpf, telefone);
-            console.log(user)
-            this.users.push(user);
-            this.saveUsers();
-            return user;
+
+            const resultados = await mysql.execute(
+                `INSERT INTO usuario (nome, email, senha, endereco, cpf, telefone) 
+                      VALUES (?, ?, ?, ?, ?, ?);`
+                      [nome, email, senhaCripto, endereco, cpf, telefone]
+            );
+            return resultados;
+
         } catch (erro) {
             console.log("Erro ao add id", erro);
             throw erro;

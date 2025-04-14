@@ -15,7 +15,7 @@ app.post("/user", async (req, res) => {
                     ({ error: "Todos os campos são obrigatórios (nome, email, senha, endereco, cpf, telefone)" });
             }
             const user = await userService.addUser(nome, email, senha, endereco, cpf, telefone);  // Adiciona o usuário com os novos dados
-            res.status(200).json({ user });  // Retorna o usuário criado
+            res.status(200).json({ mensagem: "Usuario Cadastrado com Sucesso!" });  // Retorna o usuário criado
         } catch (erro) {
             console.log(erro);
             res.status(400).json({ error: erro.message });
