@@ -44,11 +44,11 @@ app.delete("/users/:id", (req, res) => {
 // Rota para atualizar um usuário pelo ID
 app.put("/users/:id", (req, res) => {
     const id = parseInt(req.params.id); // Converte o ID para número
-    const newData = req.body; // Dados novos do usuário
+    const { nome, email, senha, endereco, cpf, telefone } = req.body;
 
     try {
-        const updatedUser = userService.updateUser(id, newData);
-        res.status(200).json(updatedUser); // Retorna o usuário atualizado
+        const user = userService.updateUser(id, nome, email, senha, endereco, cpf, telefone);
+        res.status(200).json("Usuário atualizado com sucesso"); // Retorna o usuário atualizado
     } catch (erro) {
         res.status(404).json({ error: erro.message }); // Retorna a mensagem de erro
     }

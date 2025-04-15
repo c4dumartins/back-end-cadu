@@ -46,22 +46,11 @@ class userService {
 
     async addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
-            const cpfexistente = this.users.some(user => user.cpf === cpf)
-            if(cpfexistente){
-                throw new Error('Usuário não encontrado'); 
-            }
-            if(cpf !== user.cpf){
-                const cpfexistente = this.users.some(u => u.id !== id
-                    && u.cpf === cpf);
-                if (cpfexistente) {
-                    throw new Error('CPF já cadastrado')
-                }
-            }
             const senhaCripto = await bcrypt.hash(senha, 10);
 
             const resultados = await mysql.execute(
                 `INSERT INTO usuario (nome, email, senha, endereco, cpf, telefone) 
-                      VALUES (?, ?, ?, ?, ?, ?);`
+                      VALUES (?, ?, ?, ?, ?, ?);`,
                       [nome, email, senhaCripto, endereco, cpf, telefone]
             );
             return resultados;
@@ -85,26 +74,45 @@ class userService {
             this.users = this.users.filter(user => user.id !== id);
             this.saveUsers();
 
-        }catch{
+        } catch (erro) {
             console.log('erro ao deletar usuario', erro);
         }
     }
 
-    updateUser(id, newData) { 
+    async updateUser(id, nome, email, senha, endereco, cpf, telefone) {
         try {
-            const userIndex = this.users.findIndex(user => user.id === id);
-            
-            if (userIndex === -1) throw new Error("Usuário não encontrado");
+            // Criptografa a senha, se ela existir
+            let senhaCripto = senha;
+            if (senha) {
+                senhaCripto = await bcrypt.hash(senha, 10);
+            }
     
-            this.users[userIndex] = { ...this.users[userIndex], ...newData };
-            this.saveUsers();
+            const [resultado] = await mysql.execute(
+                `UPDATE usuario 
+                 SET nome = ?, email = ?, senha = ?, endereco = ?, cpf = ?, telefone = ?
+                 WHERE idusuario = ?`,
+                [nome, email, senhaCripto, endereco, cpf, telefone, id]
+            );
     
-            return this.users[userIndex];
+            if (resultado.affectedRows === 0) {
+                throw new Error("Usuário não encontrado");
+            }
+    
+            return {
+                id,
+                nome,
+                email,
+                endereco,
+                cpf,
+                telefone
+            };
+    
         } catch (erro) {
             console.log("Erro ao atualizar usuário:", erro);
             throw erro;
         }
     }
+    
     
 
 }
