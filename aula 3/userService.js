@@ -3,10 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const mysql = require ("./mysql");
+const { get } = require("http");
 
 
 class userService {
-    
+
     async addUser(nome, email, senha, endereco, cpf, telefone) {
         try {
             const senhaCripto = await bcrypt.hash(senha, 10);
@@ -24,19 +25,31 @@ class userService {
         }
     }
 
-    getUsers() {
+    async getUser(id) {
         try {
-            return this.users;
+            const resultado = await mysql.execute(
+                `SELECT idusuario FROM usuario WHERE idusuario = ?`,
+                [id]
+            );
+            console.log("resultado", resultado);
+            return resultado;
         } catch (erro) {
             console.log("Erro ao buscar usuario", erro);
         }
     }
 
-    deleteUser(id){
+    async deleteUser(id){
         try{
-            this.users = this.users.filter(user => user.id !== id);
-            this.saveUsers();
-
+            const user = await this.getUser(id);
+            if(user.length == 0) {
+                console.log("Usuário não existe!");
+                return;
+            }
+            const resultado = await mysql.execute(
+                `DELETE FROM usuario WHERE idusuario = ?`,
+                [id]
+            );
+            return resultado;
         } catch (erro) {
             console.log('erro ao deletar usuario', erro);
         }
